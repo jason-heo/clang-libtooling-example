@@ -18,7 +18,7 @@ I have tested on following environment.
 
 ### build
 
-	$ git clone https://github.com/mysqlguru/libtooling-example.git example
+	$ git clone https://github.com/mysqlguru/clang-libtooling-example.git example
     $ cd example
     $ make
 
