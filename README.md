@@ -2,7 +2,7 @@
 
 본 예제는 [Clang LibTooling Example][1] 를 g++ 4.8.2, clang 3.5에서 작동하도록 수정한 버전입니다.
 
-This git project is porting of [Clang LibTooling Example][1] for g++ 4.8.2 and clang 3.5. Original example does not complied with clang 3.5. that's why I made some changes.
+This git project is ported version of [Clang LibTooling Example][1] for g++ 4.8.2 and clang 3.5. Original example does not complied with clang 3.5. that's why I made some changes.
 
 ## Test 환경 (Test Environment)
 
