@@ -11,39 +11,41 @@
 #include "clang/ASTMatchers/ASTMatchers.h"
 #include "clang/ASTMatchers/ASTMatchFinder.h"
 
+#include "clang/Rewrite/Core/Rewriter.h"
+
 using namespace clang::tooling;
 using namespace llvm;
 
 using namespace clang;
 using namespace clang::ast_matchers;
 
-StatementMatcher LoopMatcher0 =
-  forStmt(hasLoopInit(declStmt(hasSingleDecl(varDecl(
-    hasInitializer(integerLiteral(equals(0)))))))).bind("forLoop0");
+DeclarationMatcher FieldDeclMatcher =
+    clang::ast_matchers::fieldDecl().bind("field_decl");
 
-StatementMatcher LoopMatcher1 =
-  forStmt(hasLoopInit(declStmt(hasSingleDecl(varDecl(
-    hasInitializer(integerLiteral(equals(1)))))))).bind("forLoop1");
 
 class LoopPrinter : public MatchFinder::MatchCallback
 {
 public :
-    virtual void run(const MatchFinder::MatchResult &Result)
+    virtual void run(const MatchFinder::MatchResult& result)
     {
-        if (const ForStmt *FS
-            = Result.Nodes.getNodeAs<clang::ForStmt>("forLoop0"))
+        if (const clang::FieldDecl* fd
+            = result.Nodes.getNodeAs<clang::FieldDecl>("field_decl"))
         {
-            std::cout << "===== found: forLoop0 =====" << std::endl;
-            FS->dump();
-            std::cout << std::endl;
+            std::cout << "======== FieldDecl found ======" << std::endl;
+
+            const clang::RecordDecl* rd = fd->getParent();
+            const clang::QualType qt = fd->getType();
+            const clang::Type* t = qt.getTypePtr();
+            
+            std::cout << "FieldDecl found '"
+                      << fd->getQualifiedNameAsString() << " "
+                      << fd->getName().str() << "' in '"
+                      << rd->getName().str() << "'. "
+                      << "is Builtintype = " << t->isBuiltinType() << " "
+                      << std::endl << std::endl;
         }
-        else if (const ForStmt *FS
-            = Result.Nodes.getNodeAs<clang::ForStmt>("forLoop1"))
-        {
-            std::cout << "===== found: forLoop1 =====" << std::endl;
-            std::cout << "do nothing" << std::end << std::endl;
-        }
-    }
+
+    } // end of run()
 };
 
 // Apply a custom category to all command-line options so that they are the
@@ -66,8 +68,7 @@ int main(int argc, const char **argv)
 
     LoopPrinter printer;
     clang::ast_matchers::MatchFinder finder;
-    finder.addMatcher(LoopMatcher0, &printer);
-    finder.addMatcher(LoopMatcher1, &printer);
+    finder.addMatcher(FieldDeclMatcher, &printer);
 
     return Tool.run(newFrontendActionFactory(&finder).get());
 }

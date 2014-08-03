@@ -1,5 +1,3 @@
-#include <stdio.h>
-
 int main(int argc, char* argv[])
 {
     for (int cnt0 = 0; cnt0 < 10; ++cnt0)

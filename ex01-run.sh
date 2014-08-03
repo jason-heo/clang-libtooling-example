@@ -1,3 +1,3 @@
 #!/bin/sh
 
-./ex01-libtooling ex01-input.c --
+./ex01 ex01-input.cc --
